@@ -3,7 +3,6 @@ const board = document.getElementById('board');
 const scoreEl = document.getElementById('score');
 const timeEl = document.getElementById('time');
 
-// 서해 아치 먹는 커서 생성 (누끼 딴 _1.png)
 const eater = document.createElement('div');
 eater.id = 'eater-cursor';
 document.body.appendChild(eater);
@@ -14,7 +13,6 @@ board.addEventListener('mousemove', (e) => {
     eater.style.top = `${e.pageY}px`;
 });
 
-// 먹는 모션(확대 후 덮치기)
 board.addEventListener('mousedown', (e) => {
     eater.classList.remove('eat-animation');
     void eater.offsetWidth; 
@@ -58,8 +56,11 @@ const gameInterval = setInterval(() => {
         holes[idx].style.backgroundColor = "#555";
     }
     holes[idx].classList.add('up');
-    setTimeout(() => holes[idx].classList.remove('up'), 800);
-}, 600);
+    
+    // 속도 업: 두더지가 떠 있는 시간 (600ms)
+    setTimeout(() => holes[idx].classList.remove('up'), 600);
+// 속도 업: 두더지가 출몰하는 빈도 (450ms 마다)
+}, 450);
 
 const timer = setInterval(() => {
     time--; timeEl.innerText = time;
