@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>아치의 바다 지킴이 대작전</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>아치의 바다 지킴이 대작전</h1>
+    <p>지도에서 지역을 선택해 미션을 수행하세요!</p>
+    <button class="btn" onclick="localStorage.clear(); location.reload();">진행 상황 초기화</button>
+    
+    <div class="map-container">
+        <a href="seohae.html" id="pin-seohae" class="pin">서해</a>
+        <a href="donghae.html" id="pin-donghae" class="pin">동해</a>
+        <a href="jungbu.html" id="pin-jungbu" class="pin">중부</a>
+        <a href="namhae.html" id="pin-namhae" class="pin">남해</a>
+        <a href="jeju.html" id="pin-jeju" class="pin">제주</a>
+    </div>
+
+    <script src="js/progress.js"></script>
+</body>
+</html>
