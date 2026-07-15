@@ -3,22 +3,22 @@ const board = document.getElementById('board');
 const scoreEl = document.getElementById('score');
 const timeEl = document.getElementById('time');
 
-// 서해 아치 망치 커서 생성
-const hammer = document.createElement('div');
-hammer.id = 'hammer';
-document.body.appendChild(hammer);
+// 서해 아치 먹는 커서 생성 (누끼 딴 _1.png)
+const eater = document.createElement('div');
+eater.id = 'eater-cursor';
+document.body.appendChild(eater);
 
 board.addEventListener('mousemove', (e) => {
-    hammer.style.display = 'block';
-    hammer.style.left = `${e.pageX}px`;
-    hammer.style.top = `${e.pageY}px`;
+    eater.style.display = 'block';
+    eater.style.left = `${e.pageX}px`;
+    eater.style.top = `${e.pageY}px`;
 });
 
-// 망치 내려찍는 모션 및 터치 판정
+// 먹는 모션(확대 후 덮치기)
 board.addEventListener('mousedown', (e) => {
-    hammer.classList.remove('hit-animation');
-    void hammer.offsetWidth; // 리플로우 강제 트리거로 애니메이션 재시작
-    hammer.classList.add('hit-animation');
+    eater.classList.remove('eat-animation');
+    void eater.offsetWidth; 
+    eater.classList.add('eat-animation');
     
     if (e.target.classList.contains('mole') && e.target.classList.contains('up')) {
         if (e.target.dataset.type === 'bread') score++;
@@ -44,7 +44,7 @@ const gameInterval = setInterval(() => {
     const idx = Math.floor(Math.random() * 9);
     const type = Math.random() > 0.3 ? 'bread' : 'trash';
     holes[idx].dataset.type = type;
-    // 소금빵 이미지 또는 해양 쓰레기 이모지 할당
+    
     if(type === 'bread') {
         holes[idx].style.backgroundImage = "url('assets/salt_bread.png')";
         holes[idx].textContent = "";
