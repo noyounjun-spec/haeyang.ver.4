@@ -1,0 +1,46 @@
+/* 공통 스타일 */
+body { font-family: sans-serif; background: #f0f8ff; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; user-select: none; }
+h1 { color: #004b87; }
+.mission-header { text-align: center; margin-bottom: 20px; }
+.btn { padding: 10px 20px; background: #004b87; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; }
+
+/* 허브(지도) 스타일 */
+.map-container { position: relative; width: 300px; height: 400px; background: #e0f0ff; border: 2px solid #004b87; border-radius: 10px; margin-top: 20px; }
+.pin { position: absolute; width: 60px; height: 30px; background: white; border: 2px solid #004b87; border-radius: 15px; text-align: center; line-height: 26px; cursor: pointer; font-size: 14px; font-weight: bold; text-decoration: none; color: black; }
+.pin.done { background: #004b87; color: white; }
+#pin-seohae { top: 100px; left: 30px; }
+#pin-donghae { top: 80px; right: 30px; }
+#pin-jungbu { top: 160px; left: 100px; }
+#pin-namhae { bottom: 80px; left: 120px; }
+#pin-jeju { bottom: 20px; left: 80px; }
+
+/* 공통 게임 보드 */
+.game-board { position: relative; background: white; border: 2px solid #ccc; border-radius: 10px; overflow: hidden; }
+
+/* 중부: 카드 짝맞추기 */
+.grid-jungbu { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px; }
+.card { width: 70px; height: 100px; background: #004b87; cursor: pointer; border-radius: 5px; background-image: url('../assets/archi.png'); background-size: cover; display: flex; justify-content: center; align-items: center; }
+.card img { width: 100%; height: 100%; display: none; }
+.card.flipped { background: white; }
+.card.flipped img { display: block; }
+
+/* 서해: 두더지 잡기 */
+.grid-seohae { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; width: 300px; height: 300px; }
+.hole { background: #ddd; border-radius: 50%; position: relative; cursor: pointer; overflow: hidden; }
+.mole { width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; background-position: center; position: absolute; bottom: -100%; transition: bottom 0.2s; pointer-events: none; }
+.mole.up { bottom: 0; pointer-events: auto; }
+
+/* 남해: 퍼즐 맞추기 */
+.grid-namhae { display: grid; grid-template-columns: repeat(3, 1fr); width: 300px; height: 300px; border: 2px solid #333; }
+.puzzle-piece { width: 100px; height: 100px; background-image: url('../assets/archi.png'); background-size: 300px 300px; cursor: pointer; box-sizing: border-box; border: 1px solid white; }
+.puzzle-piece.selected { border: 3px solid red; z-index: 10; }
+
+/* 제주: 낙하물 받기 */
+.catch-board { width: 300px; height: 400px; position: relative; background: #e0f7fa; }
+.basket { width: 60px; height: 40px; background: #004b87; position: absolute; bottom: 10px; left: 120px; border-radius: 0 0 10px 10px; }
+.falling-item { width: 30px; height: 30px; position: absolute; font-size: 24px; text-align: center; line-height: 30px; }
+
+/* 동해: 틀린그림찾기 */
+.diff-board { width: 300px; height: 400px; cursor: crosshair; }
+.diff-board img { width: 100%; height: 100%; pointer-events: none; }
+.marker { position: absolute; width: 30px; height: 30px; border: 3px solid red; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; }
