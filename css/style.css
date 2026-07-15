@@ -32,9 +32,30 @@ h1 { color: #004b87; }
 .marker { position: absolute; width: 40px; height: 40px; border: 4px solid #ff4757; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 10; }
 
 /* 남해: 남해 아치 빈칸 슬라이딩 퍼즐 */
-.grid-namhae { display: grid; grid-template-columns: repeat(3, 1fr); width: 300px; height: 300px; border: 2px solid #333; background: #ddd; gap: 2px; }
-.puzzle-piece { width: 100%; height: 100%; background-image: url('../assets/namhae_archi_1.png'); background-size: 300px 300px; cursor: pointer; border-radius: 4px; }
-.empty-piece { background: none !important; border: none !important; cursor: default; }
+.grid-namhae { 
+    display: grid; 
+    grid-template-columns: repeat(3, 100px); 
+    grid-template-rows: repeat(3, 100px); /* 💡 높이를 명시적으로 지정하여 안 보이는 현상 해결 */
+    width: 300px; 
+    height: 300px; 
+    border: 2px solid #004b87; 
+    background: #ddd; 
+    gap: 0; 
+}
+.puzzle-piece { 
+    width: 100px; 
+    height: 100px; 
+    background-image: url('../assets/namhae_archi_1.png'); 
+    background-size: 300px 300px; 
+    cursor: pointer; 
+    box-sizing: border-box;
+    border: 1px solid #fff; /* 조각 구분선 */
+}
+.empty-piece { 
+    background: none !important; 
+    border: none !important; 
+    cursor: default; 
+}
 
 /* 제주: 제주 누끼 바구니 낙하물 받기 */
 .catch-board { width: 300px; height: 400px; position: relative; background: #e0f7fa; border: 2px solid #004b87; overflow: hidden; cursor: none; }
