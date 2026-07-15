@@ -1,73 +1,57 @@
-/* 공통 스타일 */
-body { font-family: sans-serif; background: #f0f8ff; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; user-select: none; }
-h1 { color: #004b87; }
-.mission-header { text-align: center; margin-bottom: 20px; }
-.btn { padding: 10px 20px; background: #004b87; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; }
+document.addEventListener('DOMContentLoaded', () => {
+    const board = document.getElementById('board');
 
-/* 허브(지도) 스타일 */
-.map-container { position: relative; width: 300px; height: 400px; background: #e0f0ff; border: 2px solid #004b87; border-radius: 10px; margin-top: 20px; }
-.pin { position: absolute; width: 60px; height: 30px; background: white; border: 2px solid #004b87; border-radius: 15px; text-align: center; line-height: 26px; cursor: pointer; font-size: 14px; font-weight: bold; text-decoration: none; color: black; }
-.pin.done { background: #004b87; color: white; }
-#pin-seohae { top: 100px; left: 30px; }
-#pin-donghae { top: 80px; right: 30px; }
-#pin-jungbu { top: 160px; left: 100px; }
-#pin-namhae { bottom: 80px; left: 120px; }
-#pin-jeju { bottom: 20px; left: 80px; }
+    const archiImages = [
+        'assets/seohae_archi_2.png',
+        'assets/namhae_archi_2.png',
+        'assets/donghae_archi_2.png',
+        'assets/jeju_archi_2.png',
+        'assets/jungbu_archi_2.png'
+    ];
 
-/* 서해: 소금빵 두더지 잡기 & 먹는 모션 */
-.grid-seohae { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; width: 300px; height: 300px; border: 2px solid #004b87; background: #fff; cursor: none; overflow: hidden; position: relative;}
-.hole { background: #ddd; border-radius: 50%; position: relative; overflow: hidden; }
-.mole { width: 100%; height: 100%; background-size: cover; background-repeat: no-repeat; background-position: center; position: absolute; bottom: -100%; transition: bottom 0.2s; pointer-events: none; }
-.mole.up { bottom: 0; pointer-events: auto; cursor: none; }
-#eater-cursor { position: absolute; width: 80px; height: 80px; background-image: url('../assets/seohae_archi_1.png'); background-size: contain; background-repeat: no-repeat; pointer-events: none; z-index: 9999; display: none; margin-top: -40px; margin-left: -40px; transform-origin: center; }
-.eat-animation { animation: chomp 0.2s ease-in-out; }
-@keyframes chomp { 0% { transform: scale(1); } 50% { transform: scale(1.4) translateY(10px) rotate(-10deg); } 100% { transform: scale(1); } }
+    // 🌟 속도 향상 핵심: 브라우저 캐시에 이미지 미리 불러오기 (Preload)
+    archiImages.forEach(src => {
+        const img = new Image();
+        img.src = src;
+    });
 
-/* 동해: 임의의 차이점 추가 틀린그림찾기 */
-.diff-container { display: flex; gap: 20px; justify-content: center; max-width: 100%; flex-wrap: wrap; }
-.diff-board { width: 300px; height: 400px; position: relative; border: 2px solid #004b87; background: white; overflow: hidden; }
-.diff-board img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
-.diff-board.target { cursor: crosshair; }
-.fake-diff { position: absolute; cursor: pointer; transform: translate(-50%, -50%); text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-.marker { position: absolute; width: 40px; height: 40px; border: 4px solid #ff4757; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 10; }
+    let cards = [...archiImages, ...archiImages].sort(() => Math.random() - 0.5);
+    let first = null, matched = 0, lock = false;
 
-/* 남해: 남해 아치 빈칸 슬라이딩 퍼즐 */
-.grid-namhae { 
-    display: grid; 
-    grid-template-columns: repeat(3, 100px); 
-    grid-template-rows: repeat(3, 100px); /* 💡 높이를 명시적으로 지정하여 안 보이는 현상 해결 */
-    width: 300px; 
-    height: 300px; 
-    border: 2px solid #004b87; 
-    background: #ddd; 
-    gap: 0; 
-}
-.puzzle-piece { 
-    width: 100px; 
-    height: 100px; 
-    background-image: url('../assets/namhae_archi_1.png'); 
-    background-size: 300px 300px; 
-    cursor: pointer; 
-    box-sizing: border-box;
-    border: 1px solid #fff; /* 조각 구분선 */
-}
-.empty-piece { 
-    background: none !important; 
-    border: none !important; 
-    cursor: default; 
-}
+    cards.forEach(imageSrc => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.src = imageSrc;
+        
+        const face = document.createElement('div');
+        face.className = 'card-face';
+        face.style.backgroundImage = `url('${imageSrc}')`;
+        
+        card.appendChild(face);
+        board.appendChild(card);
 
-/* 제주: 제주 누끼 바구니 낙하물 받기 */
-.catch-board { width: 300px; height: 400px; position: relative; background: #e0f7fa; border: 2px solid #004b87; overflow: hidden; cursor: none; }
-.basket { width: 80px; height: 80px; background-image: url('../assets/jeju_archi_1.png'); background-size: contain; background-position: bottom center; background-repeat: no-repeat; position: absolute; bottom: 0; left: 110px; }
-.falling-item { width: 30px; height: 30px; position: absolute; font-size: 24px; text-align: center; line-height: 30px; }
+        card.addEventListener('click', () => {
+            if (lock || card === first || card.classList.contains('flipped')) return;
+            card.classList.add('flipped');
 
-/* 중부: 5지역 배경사진 10장 짝맞추기 */
-.grid-jungbu { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 10px; max-width: 500px; margin: 0 auto; }
-.card { width: 70px; height: 100px; background: #004b87; cursor: pointer; border-radius: 5px; display: flex; justify-content: center; align-items: center; position: relative; border: 2px solid #004b87; transition: transform 0.1s; }
-.card:active { transform: scale(0.95); } /* 누를 때 살짝 들어가는 효과 (속도감 증가) */
-.card::before { content: ""; position: absolute; width: 100%; height: 100%; background-image: url('../assets/jungbu_archi_1.png'); background-size: cover; opacity: 0.3; }
-.card-face { width: 100%; height: 100%; background-size: cover; background-repeat: no-repeat; background-position: center; border-radius: 5px; opacity: 0; background-color: white; z-index: 2; transition: opacity 0.15s ease-in-out; }
-.card.flipped::before { display: none; }
-.card.flipped { background: white; }
-.card.flipped .card-face { opacity: 1; }
+            if (!first) { first = card; return; }
+            
+            if (first.dataset.src === card.dataset.src) {
+                matched++;
+                document.getElementById('score').innerText = matched;
+                first = null;
+                if (matched === 5) setTimeout(() => {
+                    if(typeof winGame === 'function') winGame('jungbu');
+                }, 300); // 승리 팝업도 더 빨리 뜨게 500->300으로 수정
+            } else {
+                lock = true;
+                // 🌟 틀렸을 때 다시 뒤집히는 속도를 800ms -> 400ms로 단축
+                setTimeout(() => {
+                    first.classList.remove('flipped');
+                    card.classList.remove('flipped');
+                    first = null; lock = false;
+                }, 400); 
+            }
+        });
+    });
+});
