@@ -1,12 +1,12 @@
 const board = document.getElementById('board');
 
-// 5지역 배경이 포함된 사진 목록 (_2.png 및 중부 원본)
+// 5지역 배경이 포함된 사진 목록 (_2.png 로 통일)
 const archiImages = [
     'assets/seohae_archi_2.png',
     'assets/namhae_archi_2.png',
     'assets/donghae_archi_2.png',
     'assets/jeju_archi_2.png',
-    'assets/jungbu_archi.png'
+    'assets/jungbu_archi_2.png' // 수정 완료
 ];
 
 // 각 2장씩 총 10장 생성 후 셔플
