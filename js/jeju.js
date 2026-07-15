@@ -5,7 +5,7 @@ let basketX = 110;
 
 board.addEventListener('mousemove', (e) => {
     const rect = board.getBoundingClientRect();
-    basketX = e.clientX - rect.left - 40; // 바구니(80px) 중앙 정렬을 위해 40을 뺌
+    basketX = e.clientX - rect.left - 40; 
     if (basketX < 0) basketX = 0;
     if (basketX > 220) basketX = 220;
     basket.style.left = `${basketX}px`;
