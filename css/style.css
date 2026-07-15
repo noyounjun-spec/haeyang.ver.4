@@ -14,38 +14,38 @@ h1 { color: #004b87; }
 #pin-namhae { bottom: 80px; left: 120px; }
 #pin-jeju { bottom: 20px; left: 80px; }
 
-/* 서해: 소금빵 두더지 잡기 & 서해 아치 망치 */
+/* 서해: 소금빵 두더지 잡기 & 먹는 모션 */
 .grid-seohae { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; width: 300px; height: 300px; border: 2px solid #004b87; background: #fff; cursor: none; overflow: hidden; position: relative;}
 .hole { background: #ddd; border-radius: 50%; position: relative; overflow: hidden; }
 .mole { width: 100%; height: 100%; background-size: cover; background-repeat: no-repeat; background-position: center; position: absolute; bottom: -100%; transition: bottom 0.2s; pointer-events: none; }
 .mole.up { bottom: 0; pointer-events: auto; cursor: none; }
-#hammer { position: absolute; width: 80px; height: 80px; background-image: url('../assets/seohae_archi.png'); background-size: contain; background-repeat: no-repeat; pointer-events: none; z-index: 9999; display: none; transform-origin: bottom left; margin-top: -40px; margin-left: -20px; }
-.hit-animation { animation: smash 0.15s ease-out; }
-@keyframes smash { 0% { transform: rotate(0deg); } 50% { transform: rotate(-60deg); } 100% { transform: rotate(0deg); } }
+#eater-cursor { position: absolute; width: 80px; height: 80px; background-image: url('../assets/seohae_archi_1.png'); background-size: contain; background-repeat: no-repeat; pointer-events: none; z-index: 9999; display: none; margin-top: -40px; margin-left: -40px; transform-origin: center; }
+.eat-animation { animation: chomp 0.2s ease-in-out; }
+@keyframes chomp { 0% { transform: scale(1); } 50% { transform: scale(1.4) translateY(10px) rotate(-10deg); } 100% { transform: scale(1); } }
 
-/* 동해: 2분할 틀린그림찾기 */
+/* 동해: 임의의 차이점 추가 틀린그림찾기 */
 .diff-container { display: flex; gap: 20px; justify-content: center; max-width: 100%; flex-wrap: wrap; }
 .diff-board { width: 300px; height: 400px; position: relative; border: 2px solid #004b87; background: white; overflow: hidden; }
 .diff-board img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 .diff-board.target { cursor: crosshair; }
-.marker { position: absolute; width: 40px; height: 40px; border: 4px solid #ff4757; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+.fake-diff { position: absolute; cursor: pointer; transform: translate(-50%, -50%); text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+.marker { position: absolute; width: 40px; height: 40px; border: 4px solid #ff4757; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 10; }
 
-/* 남해: 남해 아치 퍼즐 맞추기 */
-.grid-namhae { display: grid; grid-template-columns: repeat(3, 1fr); width: 300px; height: 300px; border: 2px solid #333; }
-.puzzle-piece { width: 100px; height: 100px; background-image: url('../assets/namhae_archi.png'); background-size: 300px 300px; cursor: pointer; box-sizing: border-box; border: 1px solid white; }
-.puzzle-piece.selected { border: 3px solid red; z-index: 10; }
+/* 남해: 남해 아치 빈칸 슬라이딩 퍼즐 */
+.grid-namhae { display: grid; grid-template-columns: repeat(3, 1fr); width: 300px; height: 300px; border: 2px solid #333; background: #ddd; gap: 2px; }
+.puzzle-piece { width: 100%; height: 100%; background-image: url('../assets/namhae_archi_1.png'); background-size: 300px 300px; cursor: pointer; border-radius: 4px; }
+.empty-piece { background: none !important; border: none !important; cursor: default; }
 
-/* 제주: 제주 아치 바구니 낙하물 받기 */
+/* 제주: 제주 누끼 바구니 낙하물 받기 */
 .catch-board { width: 300px; height: 400px; position: relative; background: #e0f7fa; border: 2px solid #004b87; overflow: hidden; cursor: none; }
-.basket { width: 80px; height: 80px; background-image: url('../assets/jeju_archi.png'); background-size: contain; background-position: bottom center; background-repeat: no-repeat; position: absolute; bottom: 0; left: 110px; }
+.basket { width: 80px; height: 80px; background-image: url('../assets/jeju_archi_1.png'); background-size: contain; background-position: bottom center; background-repeat: no-repeat; position: absolute; bottom: 0; left: 110px; }
 .falling-item { width: 30px; height: 30px; position: absolute; font-size: 24px; text-align: center; line-height: 30px; }
 
-/* 중부: 5지역 아치 카드 10장 짝맞추기 */
+/* 중부: 5지역 배경사진 10장 짝맞추기 */
 .grid-jungbu { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 10px; max-width: 500px; margin: 0 auto; }
 .card { width: 70px; height: 100px; background: #004b87; cursor: pointer; border-radius: 5px; display: flex; justify-content: center; align-items: center; position: relative; border: 2px solid #004b87; }
-/* 카드 뒷면 무늬 (원하시는 이미지나 기본 색상) */
 .card::before { content: ""; position: absolute; width: 100%; height: 100%; background-image: url('../assets/jungbu_archi.png'); background-size: cover; opacity: 0.3; }
-.card-face { width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; background-position: center; border-radius: 5px; display: none; background-color: white; z-index: 2; }
+.card-face { width: 100%; height: 100%; background-size: cover; background-repeat: no-repeat; background-position: center; border-radius: 5px; display: none; background-color: white; z-index: 2; }
 .card.flipped::before { display: none; }
 .card.flipped { background: white; }
 .card.flipped .card-face { display: block; }
