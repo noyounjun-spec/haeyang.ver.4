@@ -6,7 +6,6 @@ positions.forEach((pos, i) => {
     const piece = document.createElement('div');
     piece.className = 'puzzle-piece';
     piece.dataset.correct = i;
-    // 배경 이미지 위치 계산 (3x3)
     const x = (pos % 3) * -100;
     const y = Math.floor(pos / 3) * -100;
     piece.style.backgroundPosition = `${x}px ${y}px`;
@@ -18,16 +17,12 @@ positions.forEach((pos, i) => {
             firstPiece = piece;
             piece.classList.add('selected');
         } else {
-            // 위치 교환
             const tempPos = firstPiece.dataset.current;
             const tempBg = firstPiece.style.backgroundPosition;
-            
             firstPiece.dataset.current = piece.dataset.current;
             firstPiece.style.backgroundPosition = piece.style.backgroundPosition;
-            
             piece.dataset.current = tempPos;
             piece.style.backgroundPosition = tempBg;
-            
             firstPiece.classList.remove('selected');
             firstPiece = null;
             checkWin();
@@ -36,9 +31,8 @@ positions.forEach((pos, i) => {
 });
 
 function checkWin() {
-    const pieces = document.querySelectorAll('.puzzle-piece');
     let isWin = true;
-    pieces.forEach(p => {
+    document.querySelectorAll('.puzzle-piece').forEach(p => {
         if (p.dataset.correct !== p.dataset.current) isWin = false;
     });
     if (isWin) setTimeout(() => winGame('namhae'), 300);
