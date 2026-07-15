@@ -1,17 +1,28 @@
 const board = document.getElementById('board');
-const filters = ['hue-rotate(90deg)', 'hue-rotate(180deg)', 'hue-rotate(270deg)', 'grayscale(1)', 'invert(1)', 'sepia(1)'];
-let cards = [...filters, ...filters].sort(() => Math.random() - 0.5);
+// 전체 5지역 아치 리스트
+const archiImages = [
+    'assets/namhae_archi.png',
+    'assets/donghae_archi_1.png',
+    'assets/seohae_archi.png',
+    'assets/jeju_archi.png',
+    'assets/jungbu_archi.png'
+];
+
+// 2장씩 복제하여 10장 생성 및 섞기
+let cards = [...archiImages, ...archiImages].sort(() => Math.random() - 0.5);
 let first = null, matched = 0, lock = false;
 
-cards.forEach(filter => {
+cards.forEach(imageSrc => {
     const card = document.createElement('div');
     card.className = 'card';
-    card.dataset.filter = filter;
+    card.dataset.src = imageSrc;
     
-    const img = document.createElement('img');
-    img.src = 'assets/archi.png';
-    img.style.filter = filter;
-    card.appendChild(img);
+    // 카드 앞면 (캐릭터 얼굴)
+    const face = document.createElement('div');
+    face.className = 'card-face';
+    face.style.backgroundImage = `url('${imageSrc}')`;
+    
+    card.appendChild(face);
     board.appendChild(card);
 
     card.addEventListener('click', () => {
@@ -20,11 +31,12 @@ cards.forEach(filter => {
 
         if (!first) { first = card; return; }
         
-        if (first.dataset.filter === card.dataset.filter) {
+        if (first.dataset.src === card.dataset.src) {
             matched++;
             document.getElementById('score').innerText = matched;
             first = null;
-            if (matched === 6) setTimeout(() => winGame('jungbu'), 500);
+            // 5쌍을 모두 맞추면 승리
+            if (matched === 5) setTimeout(() => winGame('jungbu'), 500);
         } else {
             lock = true;
             setTimeout(() => {
