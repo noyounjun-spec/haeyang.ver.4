@@ -1,57 +1,213 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const board = document.getElementById('board');
+@charset "utf-8";
 
-    const archiImages = [
-        'assets/seohae_archi_2.png',
-        'assets/namhae_archi_2.png',
-        'assets/donghae_archi_2.png',
-        'assets/jeju_archi_2.png',
-        'assets/jungbu_archi_2.png'
-    ];
+/* 1. 기본 초기화 (화면 삐뚤어짐, 튀어나옴 완벽 방지) */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-    // 🌟 속도 향상 핵심: 브라우저 캐시에 이미지 미리 불러오기 (Preload)
-    archiImages.forEach(src => {
-        const img = new Image();
-        img.src = src;
-    });
+body {
+    font-family: '맑은 고딕', sans-serif;
+    background-color: #f0f8ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px;
+    user-select: none;
+}
 
-    let cards = [...archiImages, ...archiImages].sort(() => Math.random() - 0.5);
-    let first = null, matched = 0, lock = false;
+/* 텍스트 및 헤더 */
+.mission-header {
+    text-align: center;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 500px;
+}
+.mission-header h1, .mission-header h2 { color: #004b87; margin-bottom: 8px; font-size: 24px; }
+.mission-header p { color: #333; font-weight: bold; }
 
-    cards.forEach(imageSrc => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.dataset.src = imageSrc;
-        
-        const face = document.createElement('div');
-        face.className = 'card-face';
-        face.style.backgroundImage = `url('${imageSrc}')`;
-        
-        card.appendChild(face);
-        board.appendChild(card);
+/* 버튼 공통 */
+.btn {
+    padding: 10px 20px;
+    background: #004b87;
+    color: white;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    margin-bottom: 20px;
+    text-decoration: none;
+}
 
-        card.addEventListener('click', () => {
-            if (lock || card === first || card.classList.contains('flipped')) return;
-            card.classList.add('flipped');
+/* 게임 보드 공통 스타일 (테두리 및 둥근 모서리) */
+.game-board {
+    background: white;
+    border: 3px solid #004b87;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
 
-            if (!first) { first = card; return; }
-            
-            if (first.dataset.src === card.dataset.src) {
-                matched++;
-                document.getElementById('score').innerText = matched;
-                first = null;
-                if (matched === 5) setTimeout(() => {
-                    if(typeof winGame === 'function') winGame('jungbu');
-                }, 300); // 승리 팝업도 더 빨리 뜨게 500->300으로 수정
-            } else {
-                lock = true;
-                // 🌟 틀렸을 때 다시 뒤집히는 속도를 800ms -> 400ms로 단축
-                setTimeout(() => {
-                    first.classList.remove('flipped');
-                    card.classList.remove('flipped');
-                    first = null; lock = false;
-                }, 400); 
-            }
-        });
-    });
-});
+
+/* ---- 각 미션별 스타일 ---- */
+
+/* [서해] 소금빵 두더지 잡기 */
+.grid-seohae {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 12px;
+    padding: 15px;
+    width: 320px;
+    height: 320px;
+    cursor: none; /* 서해 아치 커서를 쓰기 위해 기본 마우스 숨김 */
+}
+.hole {
+    background: #e0e0e0;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 6px 10px rgba(0,0,0,0.2); /* 구멍 입체감 */
+}
+.mole {
+    width: 100%; height: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    bottom: -100%;
+    transition: bottom 0.15s ease-out; /* 튀어나오는 속도 */
+    pointer-events: none;
+}
+.mole.up { bottom: 0; pointer-events: auto; cursor: none; }
+#eater-cursor {
+    position: absolute;
+    width: 90px; height: 90px;
+    background-image: url('../assets/seohae_archi_1.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    pointer-events: none;
+    z-index: 9999;
+    display: none;
+    margin-top: -45px;
+    margin-left: -45px;
+}
+.eat-animation { animation: chomp 0.2s ease-in-out; }
+@keyframes chomp {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3) translateY(10px) rotate(-15deg); }
+    100% { transform: scale(1); }
+}
+
+/* [동해] 틀린그림찾기 */
+.diff-container { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 650px; }
+.diff-board { width: 300px; height: 400px; position: relative; border: 3px solid #004b87; border-radius: 10px; background: white; overflow: hidden; }
+.diff-board img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; display: block; }
+.diff-board.target { cursor: crosshair; }
+.fake-diff { position: absolute; cursor: pointer; transform: translate(-50%, -50%); text-shadow: 2px 2px 4px rgba(0,0,0,0.3); transition: transform 0.1s; }
+.fake-diff:active { transform: translate(-50%, -50%) scale(0.8); }
+.marker { position: absolute; width: 40px; height: 40px; border: 4px solid #ff4757; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 10; box-shadow: 0 0 5px rgba(255,0,0,0.5); }
+
+/* [남해] 슬라이딩 퍼즐 */
+.grid-namhae {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: 300px;
+    height: 300px;
+    padding: 0;
+    background: #ccc; /* 빈칸 회색 */
+    gap: 0; /* 테두리 겹침 방지 */
+}
+.puzzle-piece {
+    width: 100%; height: 100%;
+    cursor: pointer;
+    border: 1px solid #fff;
+    background-repeat: no-repeat;
+}
+.empty-piece { background: transparent !important; border: none !important; cursor: default; }
+
+/* [제주] 낙하물 받기 */
+.catch-board {
+    width: 300px; height: 400px;
+    position: relative;
+    background: #e0f7fa;
+    cursor: none;
+}
+.basket {
+    width: 80px; height: 80px;
+    background-image: url('../assets/jeju_archi_1.png');
+    background-size: contain;
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    position: absolute;
+    bottom: 0;
+    left: 110px;
+}
+.falling-item {
+    width: 30px; height: 30px;
+    position: absolute;
+    font-size: 24px;
+    text-align: center;
+    line-height: 30px;
+}
+
+/* [중부] 카드 짝맞추기 */
+.grid-jungbu {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5칸에 맞춰서 자동으로 크기 분배 */
+    gap: 10px;
+    padding: 15px;
+    width: 100%;
+    max-width: 450px;
+}
+.card {
+    width: 100%;
+    aspect-ratio: 2 / 3; /* 세로로 긴 카드 비율 고정 (디자인 안 깨지는 핵심!) */
+    background: #004b87;
+    cursor: pointer;
+    border-radius: 6px;
+    position: relative;
+    border: 2px solid #002b5e;
+    transition: transform 0.1s;
+}
+.card:active { transform: scale(0.92); } /* 클릭 시 살짝 들어가는 효과 */
+.card::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url('../assets/jungbu_archi_1.png');
+    background-size: contain; background-repeat: no-repeat; background-position: center;
+    opacity: 0.3; /* 카드 뒷면 무늬 */
+}
+.card-face {
+    width: 100%; height: 100%;
+    background-size: cover; background-repeat: no-repeat; background-position: center;
+    border-radius: 4px;
+    opacity: 0; /* 숨겨둠 */
+    background-color: white;
+    z-index: 2;
+    transition: opacity 0.15s ease-in-out;
+    position: relative;
+}
+.card.flipped::before { display: none; }
+.card.flipped { background: white; border-color: #004b87; }
+.card.flipped .card-face { opacity: 1; } /* 카드 앞면 사진 즉시 표시 */
+
+
+/* ---- 허브(지도) 핀 애니메이션 ---- */
+.map-container { position: relative; width: 300px; height: 400px; background: #e0f0ff; border: 3px solid #004b87; border-radius: 10px; }
+.pin {
+    position: absolute; width: 60px; height: 30px;
+    background: white; border: 2px solid #004b87; border-radius: 15px;
+    text-align: center; line-height: 26px; cursor: pointer;
+    font-size: 14px; font-weight: bold; text-decoration: none; color: #004b87;
+    transition: transform 0.1s;
+}
+.pin:active { transform: scale(0.9); }
+.pin.done { background: #004b87; color: white; }
+#pin-seohae { top: 100px; left: 30px; }
+#pin-donghae { top: 80px; right: 30px; }
+#pin-jungbu { top: 160px; left: 120px; }
+#pin-namhae { bottom: 80px; left: 120px; }
+#pin-jeju { bottom: 20px; left: 80px; }
